@@ -1,0 +1,64 @@
+Service : n8n-workflow-manager-workers
+Cluster n8n-workflow-manager-cluster
+Desired count 1
+Status ACTIVE
+Pending count 0
+Task definition n8n-workflow-manager-workers:7
+Running count 1
+Service type REPLICA
+Launch type FARGATE
+Service role AWSServiceRoleForECS
+
+
+
+Load Balancing
+Load Balancer Name	Container Name	Container Port
+No load balancers
+
+Auto Scaling
+Minimum tasks: 1Maximum tasks: 3
+n8n-workflow-manager-workers-auto-scaling: Tracking ECSServiceAverageCPUUtilization at 50
+Policy type: Target tracking
+Disable Scale In: false
+
+---------------------------------------------------
+Service : n8n-workflow-manager-webhooks
+Cluster n8n-workflow-manager-cluster
+Desired count 1
+Status ACTIVE
+Pending count 0
+Task definition n8n-workflow-manager-webhook:4
+Running count 1
+Service type REPLICA
+Launch type FARGATE
+Service role AWSServiceRoleForECS
+
+
+Load Balancing
+Target Group Name	Container Name	Container Port
+n8n-workflow-manager-webhk	node-webhook	5678
+
+Auto Scaling
+Minimum tasks: 1Maximum tasks: 3
+n8n-workflow-manager-webhook-auto-scaling: Tracking ALBRequestCountPerTarget at 70
+Policy type: Target tracking
+Disable Scale In: false
+
+------------------------------------------------------------------
+Service : n8n-workflow-manager-service
+Cluster n8n-workflow-manager-cluster
+Desired count 1
+Status ACTIVE
+Pending count 0
+Task definition n8n-workflow-manager:17
+Running count 1
+Service type REPLICA
+Launch type FARGATE
+Service role AWSServiceRoleForECS
+
+Load Balancing
+Target Group Name	Container Name	Container Port
+n8n-workflow-manager-n8n	node	5678
+
+
+

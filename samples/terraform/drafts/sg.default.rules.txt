@@ -1,0 +1,19 @@
+Inbound rules (6)
+Name, Security group rule ID, IP version, Type, Protocol, Port range, Source, Description
+
+– sgr-db	–	MYSQL/Aurora	TCP	3306	sg-0d70305ae3c158129 / n8n-workflow-manager-db-sg	–
+
+– sgr-web	IPv4	HTTP	TCP	80	0.0.0.0/0	–
+
+– sgr-n8n2	IPv4	Custom TCP	TCP	5680	0.0.0.0/0	–
+
+– sgr-redis	–	Custom TCP	TCP	6379	sg-0b6670a3ab4f8aa44 / n8n-workflow-manager-redis-sg	–
+
+– sgr-default	–	All traffic	All	All	sg-0455f85c35c3b2cbb / default	–
+
+– sgr-n8n	IPv4	Custom TCP	TCP	5678	0.0.0.0/0	–
+
+
+Outbound rules (1/1)
+Name,Security group rule ID, IP version, Type, Protocol, Port range, Destination, Description
+– sgr-outs	IPv4	All traffic	All	All	0.0.0.0/0	–

@@ -1,0 +1,25 @@
+Tags:
+App	n8n-workflow-manager
+Env	staging
+Owner	anderson.contreira
+
+ClusterName:
+n8n-workflow-manager-cluster
+
+CodeBuild:
+APP_URL _
+APP_NAME n8n-workflow-manager
+ENVIRONMENT_NAME staging
+REPOSITORY_URI_0 000000000000.dkr.ecr.us-east-1.amazonaws.com/n8n-workflow-manager/staging/nginx
+REPOSITORY_URI_1 000000000000.dkr.ecr.us-east-1.amazonaws.com/n8n-workflow-manager/staging/node
+REPOSITORY_URI_2 000000000000.dkr.ecr.us-east-1.amazonaws.com/n8n-workflow-manager/staging/node-worker
+REPOSITORY_URI_3 000000000000.dkr.ecr.us-east-1.amazonaws.com/n8n-workflow-manager/staging/node-webhook
+
+
+n8n-workflow-manager-database.cluster-c7pvxrw77idz.us-east-1.rds.amazonaws.com
+n8n-workflow-manager-database-instance-1.c7pvxrw77idz.us-east-1.rds.amazonaws.com
+
+Queue name:
+n8n-workflow-manager-queue
+Redis
+n8n-workflow-manager-redis

@@ -1,0 +1,104 @@
+Listerners
+
+Listener ID
+Security policy
+SSL Certificate
+Rules
+HTTP : 80
+arn...3f1149689af94bdd
+N/A
+N/A
+Default: forwarding to n8n-workflow-manager-n8n
+View/edit rules
+HTTP : 5678
+arn...3cf4438fdd609e51
+N/A
+N/A
+Default: forwarding to n8n-workflow-manager-n8n
+View/edit rules
+HTTP : 5680
+arn...094cee5449daaf21
+N/A
+N/A
+Default: forwarding to n8n-workflow-manager-webhk
+View/edit rules
+
+
+Rules HTTP 80
+n8n-workflow-manager-alb
+|
+HTTP:80
+(2 rules)
+Rule limits for condition values, wildcards, and total rules.
+1
+arn...3045c
+IF
+Path is/webhook/*
+THEN
+Forward to
+n8n-workflow-manager-webhk: 1 (100%)
+Group-level stickiness: Off
+last
+HTTP 80: default action
+This rule cannot be moved or deleted
+IF
+Requests otherwise not routed
+THEN
+Forward to
+n8n-workflow-manager-n8n: 1 (100%)
+Group-level stickiness: Off
+
+https://us-east-1.console.aws.amazon.com/ec2/v2/home?region=us-east-1#ELBRules:type=app;loadBalancerName=n8n-workflow-manager-alb;loadBalancerId=171eba6f2633b2a4;listenerId=3f1149689af94bdd;accountId=000000000000
+
+Rules HTTP 5678
+
+n8n-workflow-manager-alb
+|
+HTTP:5678
+(2 rules)
+Rule limits for condition values, wildcards, and total rules.
+1
+arn...c6307
+IF
+Path is/webhook/*
+THEN
+Forward to
+n8n-workflow-manager-webhk: 1 (100%)
+Group-level stickiness: Off
+last
+HTTP 5678: default action
+This rule cannot be moved or deleted
+IF
+Requests otherwise not routed
+THEN
+Forward to
+n8n-workflow-manager-n8n: 1 (100%)
+Group-level stickiness: Off
+
+https://us-east-1.console.aws.amazon.com/ec2/v2/home?region=us-east-1#ELBRules:type=app;loadBalancerName=n8n-workflow-manager-alb;loadBalancerId=171eba6f2633b2a4;listenerId=3cf4438fdd609e51;accountId=000000000000
+
+Rules HTTP 5680
+n8n-workflow-manager-alb
+|
+HTTP:5680
+(1 rules)
+Rule limits for condition values, wildcards, and total rules.
+last
+HTTP 5680: default action
+This rule cannot be moved or deleted
+IF
+Requests otherwise not routed
+THEN
+Forward to
+n8n-workflow-manager-webhk: 1 (100%)
+Group-level stickiness: Off
+
+https://us-east-1.console.aws.amazon.com/ec2/v2/home?region=us-east-1#ELBRules:type=app;loadBalancerName=n8n-workflow-manager-alb;loadBalancerId=171eba6f2633b2a4;listenerId=094cee5449daaf21;accountId=000000000000
+
+
+
+
+
+
+
+

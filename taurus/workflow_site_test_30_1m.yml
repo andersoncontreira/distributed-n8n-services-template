@@ -1,0 +1,14 @@
+execution:
+  - concurrency: 30
+    ramp-up: 1m
+    hold-for: 30s
+    scenario: quick-test
+    #scenario: health
+
+scenarios:
+  health:
+    requests:
+      - http://workflow.site.com/healthz
+  quick-test:
+    requests:
+      - http://workflow.site.com/webhook/testelc

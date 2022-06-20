@@ -1,0 +1,10 @@
+execution:
+  - concurrency: 25
+    ramp-up: 30s
+    hold-for: 15s
+    scenario: quick-test
+
+scenarios:
+  quick-test:
+    requests:
+      - http://localhost:5678/webhook/testelc

@@ -1,0 +1,101 @@
+version: 0.2
+#env:
+#  secrets-manager:
+#    GITHUB_TOKEN: staging:GITHUB_TOKEN
+#    DOCKERHUB_USERNAME: staging:DOCKERHUB_USERNAME
+#    DOCKERHUB_PASSWORD: staging:DOCKERHUB_PASSWORD
+phases:
+  pre_build:
+    commands:
+      # AWS ECR Login
+      - aws --version
+      - echo "aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      # Docker Hub Login
+#      - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      # build variables
+      - export CONTAINER_NAME_0=nginx
+      - export CONTAINER_PORT_0=80
+      - export CONTAINER_NAME_1=node
+      - export CONTAINER_PORT_1=5678
+      - export CONTAINER_NAME_2=node-worker
+      - export CONTAINER_PORT_2=5679
+      - export CONTAINER_NAME_3=node-webhook
+      - export CONTAINER_PORT_3=5680
+      - export APP_URL=_
+      - export APP_NAME=n8n-workflow-manager
+      - export ENVIRONMENT_NAME=staging
+      - export REPOSITORY_URI_0=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/n8n-workflow-manager/staging/nginx
+      - export REPOSITORY_URI_1=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/n8n-workflow-manager/staging/node
+      - export REPOSITORY_URI_2=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/n8n-workflow-manager/staging/node-worker
+      - export REPOSITORY_URI_3=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/n8n-workflow-manager/staging/node-webhook
+  build:
+    commands:
+      # Docker BuildKit
+      - export DOCKER_BUILDKIT=1
+      # Build nginx Docker image
+      - |
+        docker build \
+          --build-arg DEFAULT_PORT=$CONTAINER_PORT_0 \
+          --build-arg SERVER_NAME=$APP_URL \
+          --build-arg CONTAINER_PORT=$CONTAINER_PORT_1 \
+          -t $CONTAINER_NAME_0 \
+          -f docker/nginx/Dockerfile .
+      # Build Docker image
+      - |
+        docker build \
+          --build-arg SERVICE_PORT=$CONTAINER_PORT_1 \
+          --build-arg PROJECT_NAME=$APP_NAME \
+          --build-arg ENVIRONMENT_NAME=$ENVIRONMENT_NAME \
+          -t $CONTAINER_NAME_1 \
+          -f docker/n8n/Dockerfile .
+      # Build Docker image
+      - |
+        docker build \
+          --build-arg SERVICE_PORT=$CONTAINER_PORT_2 \
+          --build-arg PROJECT_NAME=$APP_NAME \
+          --build-arg ENVIRONMENT_NAME=$ENVIRONMENT_NAME \
+          -t $CONTAINER_NAME_2 \
+          -f docker/n8n-worker/Dockerfile .
+      # Build Docker image
+      - |
+        docker build \
+          --build-arg SERVICE_PORT=$CONTAINER_PORT_3 \
+          --build-arg PROJECT_NAME=$APP_NAME \
+          --build-arg ENVIRONMENT_NAME=$ENVIRONMENT_NAME \
+          -t $CONTAINER_NAME_3 \
+          -f docker/n8n-webhook/Dockerfile .
+  post_build:
+    commands:
+    finally:
+      # Tag Docker images
+      - docker tag $CONTAINER_NAME_0:latest $REPOSITORY_URI_0:latest
+      - docker tag $CONTAINER_NAME_1:latest $REPOSITORY_URI_1:latest
+      - docker tag $CONTAINER_NAME_2:latest $REPOSITORY_URI_2:latest
+      - docker tag $CONTAINER_NAME_3:latest $REPOSITORY_URI_3:latest
+      # Push Docker images
+      - docker push $REPOSITORY_URI_0:latest
+      - docker push $REPOSITORY_URI_1:latest
+      - docker push $REPOSITORY_URI_2:latest
+      - docker push $REPOSITORY_URI_3:latest
+      # Write imagedefinitions.json
+      - printf '[' > imagedefinitions.json
+      - printf '{"name":"%s","imageUri":"%s"},' $CONTAINER_NAME_0 $REPOSITORY_URI_0:latest >> imagedefinitions.json
+      - printf '{"name":"%s","imageUri":"%s"}' $CONTAINER_NAME_1 $REPOSITORY_URI_1:latest >> imagedefinitions.json
+      - printf ']' >> imagedefinitions.json
+      - cat imagedefinitions.json
+      - # Write imagedefinitionsworker.json
+      - printf '[' > imagedefinitionsworker.json
+      - printf '{"name":"%s","imageUri":"%s"}' $CONTAINER_NAME_2 $REPOSITORY_URI_2:latest >> imagedefinitionsworker.json
+      - printf ']' >> imagedefinitionsworker.json
+      - cat imagedefinitionsworker.json
+      - # Write imagedefinitionswebhook.json
+      - printf '[' > imagedefinitionswebhook.json
+      - printf '{"name":"%s","imageUri":"%s"}' $CONTAINER_NAME_3 $REPOSITORY_URI_3:latest >> imagedefinitionswebhook.json
+      - printf ']' >> imagedefinitionswebhook.json
+      - cat imagedefinitionswebhook.json
+artifacts:
+  files:
+    - imagedefinitions.json
+    - imagedefinitionsworker.json
+    - imagedefinitionswebhook.json

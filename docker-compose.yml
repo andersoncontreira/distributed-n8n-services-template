@@ -1,0 +1,136 @@
+version: "3.2"
+services:
+  n8n-workflow-manager:
+    build:
+      context: .
+      dockerfile: ./docker/n8n/Dockerfile
+    depends_on:
+      - "mysql"
+      - "redis"
+    ports:
+      - "5678:5678"
+    networks:
+      - service-node-v1
+    privileged: true
+    environment:
+      TEST_ENV: ${TEST_ENV}
+      DB_TYPE: mysqldb
+      DB_MYSQLDB_DATABASE: n8n_workflow
+      DB_MYSQLDB_HOST: ${DB_MYSQLDB_HOST}
+      DB_MYSQLDB_PORT: 3306
+      DB_MYSQLDB_USER: root
+      DB_MYSQLDB_PASSWORD: n8n_workflow
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: ${DB_MYSQLDB_HOST}
+      WEBHOOK_URL: http://localhost:5680
+      N8N_DISABLE_PRODUCTION_MAIN_PROCESS: "true"
+    volumes:
+      - ~/.n8n:/home/node/.n8n
+  n8n-workflow-manager-worker:
+    build:
+      context: .
+      dockerfile: ./docker/n8n-worker/Dockerfile
+    depends_on:
+      - "mysql"
+      - "redis"
+    ports:
+      - "5679:5679"
+    networks:
+      - service-node-v1
+    privileged: true
+    environment:
+      SERVICE_PORT: 5679
+      TEST_ENV: ${TEST_ENV}
+      DB_TYPE: mysqldb
+      DB_MYSQLDB_DATABASE: n8n_workflow
+      DB_MYSQLDB_HOST: ${DB_MYSQLDB_HOST}
+      DB_MYSQLDB_PORT: 3306
+      DB_MYSQLDB_USER: root
+      DB_MYSQLDB_PASSWORD: n8n_workflow
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: ${DB_MYSQLDB_HOST}
+      WEBHOOK_URL: http://localhost:5680
+      N8N_DISABLE_PRODUCTION_MAIN_PROCESS: "true"
+    volumes:
+      - ~/.n8n:/home/node/.n8n
+  n8n-workflow-manager-webhook:
+    build:
+      context: .
+      dockerfile: ./docker/n8n-webhook/Dockerfile
+    depends_on:
+      - "mysql"
+      - "redis"
+    ports:
+      - "5680:5678"
+    expose:
+      - "5678"
+    networks:
+      - service-node-v1
+    privileged: true
+    environment:
+      SERVICE_PORT: 5680
+      TEST_ENV: ${TEST_ENV}
+      DB_TYPE: mysqldb
+      DB_MYSQLDB_DATABASE: n8n_workflow
+      DB_MYSQLDB_HOST: ${DB_MYSQLDB_HOST}
+      DB_MYSQLDB_PORT: 3306
+      DB_MYSQLDB_USER: root
+      DB_MYSQLDB_PASSWORD: n8n_workflow
+      EXECUTIONS_MODE: queue
+      QUEUE_BULL_REDIS_HOST: ${DB_MYSQLDB_HOST}
+      WEBHOOK_URL: http://localhost:5680
+      N8N_DISABLE_PRODUCTION_MAIN_PROCESS: "true"
+    volumes:
+      - ~/.n8n:/home/node/.n8n
+#  nginx:
+#    build:
+#      context: .
+#      dockerfile: ./docker/nginx/Dockerfile
+#    depends_on:
+#      - "n8n-workflow-manager"
+#    ports:
+#      - "80:80"
+#    networks:
+#      - service-node-v1
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    networks:
+      - service-node-v1
+  mysql:
+    container_name: n8n-workflow-manager-mysql
+    image: mysql:5.7.22
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: n8n_workflow
+      MYSQL_ROOT_PASSWORD: n8n_workflow
+    networks:
+      - service-node-v1
+#  localstack:
+#    image: localstack/localstack
+#    privileged: true
+#    ports:
+#      - "4566:4566"
+#      - "4567-4582:4567-4582"
+#      - "9070:9070"
+#      - "8080:8080"
+#    environment:
+#      SERVICES: sqs,lambda,cloudwatch,s3
+#      DOCKER_HOST: unix:///var/run/docker.sock
+#      PORT_WEB_UI: 9070
+#      #LAMBDA_EXECUTOR: docker # está dando erro via docker
+#      LAMBDA_EXECUTOR: local
+#      DEBUG: 1
+#      HOSTNAME_EXTERNAL: localstack
+#    networks:
+#      - service-node-v1
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - /tmp/localstack:/tmp/localstack
+networks:
+  service-node-v1:
+    external: true
