@@ -84,6 +84,10 @@ Kebab case scripts to help the developer with general tasks.
 
 | Script                      | Description                                                                          | Context           |
 |-----------------------------|--------------------------------------------------------------------------------------|-------------------|
+| boot.sh                     | Starts the application while the container is running                                | Local boot        |
+| boot-db.sh                  | Starts data to database                                                              | Local boot        |
+| boot-queues.sh              | Start application queues in localstack                                               | Local boot        |
+| boot-validate-connection.sh | Check if localstack is ready to connect                                              | Local boot        |
 | fixenv.sh                   | In some cases where the network is deleted, you can correct the container references | Local install     |
 | preenv.sh                   | Script to run pre-build commands                                                     | Local boot        |
 | runenv.sh                   | Script to start the project locally                                                  | Local development |

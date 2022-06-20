@@ -1,0 +1,107 @@
+{
+  "name": "Test Process V1",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Start",
+      "type": "n8n-nodes-base.start",
+      "typeVersion": 1,
+      "position": [
+        420,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "values": {
+          "number": [
+            {
+              "name": "requestId",
+              "value": "={{$workflow.id + \"-\"+(parseInt(Math.random()*1000000))}}"
+            }
+          ],
+          "string": [
+            {
+              "name": "service",
+              "value": "pricing-workflow"
+            },
+            {
+              "name": "date",
+              "value": "={{$now.toString()}}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        760,
+        620
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://jsonplaceholder.typicode.com/todos/1",
+        "responseFormat": "=json",
+        "options": {}
+      },
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        1060,
+        620
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "path": "test_pc_v1",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        440,
+        620
+      ],
+      "webhookId": "32fb9543-b1f5-4be2-9975-9c39a15cb9c8",
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "id": 1
+}

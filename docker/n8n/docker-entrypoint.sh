@@ -15,3 +15,6 @@ else
   # Got started without arguments
   exec su-exec node n8n
 fi
+
+# execute the boot
+bash ./scripts/boot.sh

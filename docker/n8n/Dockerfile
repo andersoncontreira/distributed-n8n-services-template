@@ -28,9 +28,36 @@ ENV NEW_RELIC_LOGLEVEL=$NEW_RELIC_LOGLEVEL
 ENV LOG_STREAM=/tmp/stdout
 
 #-----------------------------------------------------------------------------------------------------------------------
+# install aws cli
+#-----------------------------------------------------------------------------------------------------------------------
+# gcc requirement && python e pip
+RUN apk add --no-cache build-base \
+                       python3-dev \
+                       py3-pip \
+                       make \
+                       gcc \
+                       libcurl \
+                       curl \
+                       bash \
+    && rm -rf /var/cache/apk/* \
+
+# upgrade pip
+RUN pip install --upgrade pip
+
+# install aws cli
+RUN pip --no-cache-dir install --upgrade awscli
+
+#-----------------------------------------------------------------------------------------------------------------------
 # EXPOSE PORT - Expose default port at which the application will respond
 #-----------------------------------------------------------------------------------------------------------------------
 EXPOSE $SERVICE_PORT/tcp
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Basic files for boot
+#-----------------------------------------------------------------------------------------------------------------------
+COPY ./samples/query/create.user.sql /samples/query/create.user.sql
+COPY ./scripts /scripts
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 # ENTRYPOINT

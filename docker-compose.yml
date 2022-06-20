@@ -13,6 +13,9 @@ services:
       - service-node-v1
     privileged: true
     environment:
+      # Fake credentials for Localstack
+      AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
+      AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
       TEST_ENV: ${TEST_ENV}
       DB_TYPE: mysqldb
       DB_MYSQLDB_DATABASE: n8n_workflow
