@@ -1,4 +1,4 @@
-# distributed-n8n-services-template
+# distributed-n8n-services-template (Work in progress...)
 Project with a robust configuration of the service N8N for high volume of data.
 The focus of this project is to help the community to easily configure this tool to meet scenarios of high process concurrency.
 This project can process over than 30k events in less than 5 minutes.
